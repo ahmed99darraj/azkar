@@ -8,7 +8,6 @@ import {
   IconButton,
   useToast,
   Spinner,
-  Image,
 } from '@chakra-ui/react';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { supabase, RadioStation } from '../config/supabase';
