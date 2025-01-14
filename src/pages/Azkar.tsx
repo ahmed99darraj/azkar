@@ -1,87 +1,119 @@
-import { useState, useEffect } from 'react';
-import { Box, Container, Heading, SimpleGrid, Card, CardBody, Text, Spinner, Center, useToast } from '@chakra-ui/react';
-import { supabase } from '../config/supabase';
-
-interface Zikr {
-  id: number;
-  text: string;
-  count?: number;
-  description?: string;
-  category?: string;
-}
+import { useEffect, useState } from 'react';
+import { Box, Container, Heading, SimpleGrid, Text, Select, Spinner, useToast } from '@chakra-ui/react';
+import { supabase, Zikr, Category } from '../config/supabase';
 
 const Azkar = () => {
   const [azkar, setAzkar] = useState<Zikr[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
-    const fetchAzkar = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('azkar')
-          .select('*')
-          .order('id');
-
-        if (error) throw error;
-        setAzkar(data || []);
-      } catch (error) {
-        console.error('Error fetching azkar:', error);
-        toast({
-          title: 'خطأ',
-          description: 'حدث خطأ أثناء تحميل الأذكار',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    fetchCategories();
     fetchAzkar();
-  }, [toast]);
+  }, []);
 
-  if (loading) {
-    return (
-      <Center h="50vh">
-        <Spinner size="xl" color="green.500" />
-      </Center>
-    );
-  }
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      toast({
+        title: 'خطأ في تحميل التصنيفات',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const fetchAzkar = async () => {
+    try {
+      setLoading(true);
+      let query = supabase.from('azkar').select('*');
+      
+      if (selectedCategory !== 'all') {
+        query = query.eq('category_id', selectedCategory);
+      }
+
+      const { data, error } = await query.order('id');
+      
+      if (error) throw error;
+      setAzkar(data || []);
+    } catch (error) {
+      console.error('Error fetching azkar:', error);
+      toast({
+        title: 'خطأ في تحميل الأذكار',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAzkar();
+  }, [selectedCategory]);
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Heading as="h1" size="xl" mb={8} textAlign="center">
-        الأذكار
-      </Heading>
+      <Box mb={8}>
+        <Heading mb={4} textAlign="center">الأذكار</Heading>
+        <Select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          mb={6}
+        >
+          <option value="all">جميع الأذكار</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name} {category.icon}
+            </option>
+          ))}
+        </Select>
+      </Box>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-        {azkar.map((zikr) => (
-          <Card key={zikr.id}>
-            <CardBody>
-              <Text fontSize="lg" mb={4}>
+      {loading ? (
+        <Box textAlign="center" py={10}>
+          <Spinner size="xl" />
+        </Box>
+      ) : (
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+          {azkar.map((zikr) => (
+            <Box
+              key={zikr.id}
+              p={5}
+              shadow="md"
+              borderWidth="1px"
+              borderRadius="lg"
+              bg="white"
+            >
+              <Text fontSize="lg" mb={3}>
                 {zikr.text}
               </Text>
               {zikr.count && (
-                <Text color="green.500" fontWeight="bold">
+                <Text color="gray.600" fontSize="sm">
                   عدد المرات: {zikr.count}
                 </Text>
               )}
               {zikr.description && (
-                <Text mt={2} color="gray.600">
+                <Text color="gray.600" fontSize="sm" mt={2}>
                   {zikr.description}
                 </Text>
               )}
-              {zikr.category && (
-                <Text mt={2} color="blue.500">
-                  {zikr.category}
-                </Text>
-              )}
-            </CardBody>
-          </Card>
-        ))}
-      </SimpleGrid>
+            </Box>
+          ))}
+        </SimpleGrid>
+      )}
     </Container>
   );
 };

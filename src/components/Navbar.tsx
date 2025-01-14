@@ -1,7 +1,9 @@
-import { Box, Flex, Link, Heading } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
     <Box bg="green.500" px={4} py={3}>
       <Flex maxW="container.xl" mx="auto" align="center" justify="space-between">
@@ -9,15 +11,33 @@ const Navbar = () => {
           الموسوعة الإسلامية
         </Heading>
         <Flex gap={6}>
-          <Link as={RouterLink} to="/" color="white" fontWeight="bold">
+          <Text
+            color="white"
+            fontWeight="bold"
+            cursor="pointer"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => navigate('/')}
+          >
             الرئيسية
-          </Link>
-          <Link as={RouterLink} to="/azkar" color="white" fontWeight="bold">
+          </Text>
+          <Text
+            color="white"
+            fontWeight="bold"
+            cursor="pointer"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => navigate('/azkar')}
+          >
             الأذكار
-          </Link>
-          <Link as={RouterLink} to="/radio" color="white" fontWeight="bold">
+          </Text>
+          <Text
+            color="white"
+            fontWeight="bold"
+            cursor="pointer"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => navigate('/radio')}
+          >
             الراديو
-          </Link>
+          </Text>
         </Flex>
       </Flex>
     </Box>

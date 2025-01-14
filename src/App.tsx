@@ -1,14 +1,28 @@
-import { ChakraProvider, CSSReset } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Azkar from './pages/Azkar';
 import Radio from './pages/Radio';
 
+const theme = extendTheme({
+  direction: 'rtl',
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+  styles: {
+    global: {
+      body: {
+        bg: 'gray.50',
+      },
+    },
+  },
+});
+
 function App() {
   return (
-    <ChakraProvider>
-      <CSSReset />
+    <ChakraProvider theme={theme}>
       <Router>
         <Navbar />
         <Routes>
