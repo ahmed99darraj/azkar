@@ -2,9 +2,9 @@ import { extendTheme } from '@chakra-ui/react';
 
 const theme = extendTheme({
   direction: 'rtl',
-  fonts: {
-    heading: '"Noto Sans Arabic", sans-serif',
-    body: '"Noto Sans Arabic", sans-serif',
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
   },
   styles: {
     global: {
@@ -14,20 +14,12 @@ const theme = extendTheme({
     },
   },
   components: {
-    Button: {
+    Select: {
       baseStyle: {
-        fontWeight: 'bold',
-      },
-      defaultProps: {
-        colorScheme: 'green',
-      },
-    },
-    Card: {
-      baseStyle: {
-        container: {
-          boxShadow: 'lg',
-          rounded: 'lg',
-          p: 4,
+        field: {
+          _focus: {
+            borderColor: 'green.500',
+          },
         },
       },
     },

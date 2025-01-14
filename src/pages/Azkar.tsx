@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Box, Container, Heading, SimpleGrid, Text, Select, Spinner, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Heading,
+  SimpleGrid,
+  Text,
+  Select as ChakraSelect,
+  Spinner,
+  useToast as useChakraToast,
+} from '@chakra-ui/react';
 import { supabase, Zikr, Category } from '../config/supabase';
 
 const Azkar = () => {
@@ -7,7 +16,7 @@ const Azkar = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
-  const toast = useToast();
+  const toast = useChakraToast();
 
   useEffect(() => {
     fetchCategories();
@@ -68,7 +77,7 @@ const Azkar = () => {
     <Container maxW="container.xl" py={8}>
       <Box mb={8}>
         <Heading mb={4} textAlign="center">الأذكار</Heading>
-        <Select
+        <ChakraSelect
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           mb={6}
@@ -79,7 +88,7 @@ const Azkar = () => {
               {category.name} {category.icon}
             </option>
           ))}
-        </Select>
+        </ChakraSelect>
       </Box>
 
       {loading ? (
